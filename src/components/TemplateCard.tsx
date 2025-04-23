@@ -1,0 +1,86 @@
+
+import React from 'react';
+import { ThumbsUp, ThumbsDown } from 'lucide-react';
+
+export interface Template {
+  id: string;
+  name: string;
+  image: string;
+  atsScore: number;
+  tags: string[];
+  upvotes: number;
+  downvotes: number;
+}
+
+interface TemplateCardProps {
+  template: Template;
+  selected: boolean;
+  onSelect: (id: string) => void;
+}
+
+const TemplateCard: React.FC<TemplateCardProps> = ({ template, selected, onSelect }) => {
+  // Calculate score color based on ATS score
+  const getScoreColor = (score: number) => {
+    if (score >= 90) return 'bg-green-500';
+    if (score >= 70) return 'bg-yellow-500';
+    return 'bg-red-500';
+  };
+  
+  return (
+    <div 
+      className={`template-card ${selected ? 'selected' : ''}`}
+      onClick={() => onSelect(template.id)}
+    >
+      <div className="relative overflow-hidden">
+        <img 
+          src={template.image} 
+          alt={template.name} 
+          className="w-full h-64 object-cover object-top transition-transform duration-700 hover:scale-105"
+        />
+        <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center text-xs font-medium">
+          <span className={`h-2 w-2 ${getScoreColor(template.atsScore)} rounded-full mr-1`}></span>
+          ATS Score: {template.atsScore}%
+        </div>
+      </div>
+      
+      <div className="p-4 flex-grow">
+        <h3 className="font-medium text-lg mb-2">{template.name}</h3>
+        <div className="flex flex-wrap gap-1 mb-4">
+          {template.tags.map((tag, index) => (
+            <span 
+              key={index} 
+              className="text-xs bg-resumeblue-light text-resumeblue px-2 py-1 rounded-full"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+      
+      <div className="border-t border-gray-100 p-4 flex justify-between items-center">
+        <div className="flex gap-4 text-sm text-resumetext-lighter">
+          <div className="flex items-center gap-1">
+            <button className="text-gray-400 hover:text-green-500 transition-colors">
+              <ThumbsUp className="h-4 w-4" />
+            </button>
+            <span>{template.upvotes}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <button className="text-gray-400 hover:text-red-500 transition-colors">
+              <ThumbsDown className="h-4 w-4" />
+            </button>
+            <span>{template.downvotes}</span>
+          </div>
+        </div>
+        
+        {selected && (
+          <button className="btn-primary py-1 px-4 text-sm animate-fade-in">
+            Continue
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default TemplateCard;
