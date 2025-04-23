@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { ThumbsUp, ThumbsDown, CheckCircle } from 'lucide-react';
 import { Button } from './ui/button';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export interface Template {
   id: string;
@@ -24,16 +25,10 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
   selected,
   onSelect
 }) => {
-  const navigate = useNavigate();
-  
   const getScoreColor = (score: number) => {
     if (score >= 90) return 'bg-green-500';
     if (score >= 70) return 'bg-yellow-500';
     return 'bg-red-500';
-  };
-
-  const handleContinue = () => {
-    navigate(`/editor/${template.id}`);
   };
 
   return <div className={`
@@ -92,16 +87,17 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
       
       <div className="border-t border-gray-100 p-3">
         {selected && (
-          <Button 
-            size="sm" 
-            className="w-full text-sm font-medium px-3 py-2"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleContinue();
-            }}
-          >
-            Continue
-          </Button>
+          <Link to={`/editor/${template.id}`} className="w-full">
+            <Button 
+              size="sm" 
+              className="w-full text-sm font-medium px-3 py-2"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              Continue
+            </Button>
+          </Link>
         )}
       </div>
     </div>;
