@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ThumbsUp, ThumbsDown, CheckCircle } from 'lucide-react';
 import { Button } from './ui/button';
@@ -50,12 +51,29 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
       </div>
       
       <div className="px-4 pt-4 flex-grow">
-        <h3 className={`
-          font-medium text-lg mb-2 
-          ${selected ? 'text-resumeblue font-bold' : ''}
-        `}>
-          {template.name}
-        </h3>
+        <div className="flex justify-between items-center mb-2">
+          <h3 className={`
+            font-medium text-lg
+            ${selected ? 'text-resumeblue font-bold' : ''}
+          `}>
+            {template.name}
+          </h3>
+          <div className="flex items-center gap-4 text-sm text-resumetext-lighter">
+            <div className="flex items-center gap-1">
+              <button className="text-gray-400 hover:text-green-500 transition-colors">
+                <ThumbsUp className="h-4 w-4" />
+              </button>
+              <span>{template.upvotes}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <button className="text-gray-400 hover:text-red-500 transition-colors">
+                <ThumbsDown className="h-4 w-4" />
+              </button>
+              <span>{template.downvotes}</span>
+            </div>
+          </div>
+        </div>
+
         <div className="flex flex-wrap gap-1 mb-4">
           {template.tags.map((tag, index) => <span key={index} className={`
                 text-xs px-2 py-1 rounded-full 
@@ -63,21 +81,6 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
               `}>
               {tag}
             </span>)}
-        </div>
-
-        <div className="flex justify-start items-center gap-4 text-sm text-resumetext-lighter mb-4">
-          <div className="flex items-center gap-1">
-            <button className="text-gray-400 hover:text-green-500 transition-colors">
-              <ThumbsUp className="h-4 w-4" />
-            </button>
-            <span>{template.upvotes}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <button className="text-gray-400 hover:text-red-500 transition-colors">
-              <ThumbsDown className="h-4 w-4" />
-            </button>
-            <span>{template.downvotes}</span>
-          </div>
         </div>
       </div>
       
@@ -92,3 +95,4 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
 };
 
 export default TemplateCard;
+
