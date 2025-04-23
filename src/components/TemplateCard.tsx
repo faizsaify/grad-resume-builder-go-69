@@ -49,7 +49,7 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
         </div>
       </div>
       
-      <div className="p-4 flex-grow">
+      <div className="px-4 pt-4 flex-grow">
         <h3 className={`
           font-medium text-lg mb-2 
           ${selected ? 'text-resumeblue font-bold' : ''}
@@ -64,16 +64,8 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
               {tag}
             </span>)}
         </div>
-      </div>
-      
-      <div className="border-t border-gray-100 p-4 flex flex-col space-y-4">
-        {selected && (
-          <Button size="lg" className="w-full animate-fade-in text-base font-semibold">
-            Continue
-          </Button>
-        )}
-        
-        <div className="flex justify-start items-center gap-4 text-sm text-resumetext-lighter">
+
+        <div className="flex justify-start items-center gap-4 text-sm text-resumetext-lighter mb-4">
           <div className="flex items-center gap-1">
             <button className="text-gray-400 hover:text-green-500 transition-colors">
               <ThumbsUp className="h-4 w-4" />
@@ -87,6 +79,14 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
             <span>{template.downvotes}</span>
           </div>
         </div>
+      </div>
+      
+      <div className="border-t border-gray-100 p-4">
+        {selected && (
+          <Button size="lg" className="w-full animate-fade-in text-base font-semibold">
+            Continue
+          </Button>
+        )}
       </div>
     </div>;
 };
