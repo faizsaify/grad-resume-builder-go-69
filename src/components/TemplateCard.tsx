@@ -1,5 +1,7 @@
 import React from 'react';
 import { ThumbsUp, ThumbsDown, CheckCircle } from 'lucide-react';
+import { Button } from './ui/button';
+
 export interface Template {
   id: string;
   name: string;
@@ -9,22 +11,24 @@ export interface Template {
   upvotes: number;
   downvotes: number;
 }
+
 interface TemplateCardProps {
   template: Template;
   selected: boolean;
   onSelect: (id: string) => void;
 }
+
 const TemplateCard: React.FC<TemplateCardProps> = ({
   template,
   selected,
   onSelect
 }) => {
-  // Calculate score color based on ATS score
   const getScoreColor = (score: number) => {
     if (score >= 90) return 'bg-green-500';
     if (score >= 70) return 'bg-yellow-500';
     return 'bg-red-500';
   };
+
   return <div className={`
         template-card 
         ${selected ? 'ring-4 ring-resumeblue/70 scale-105 shadow-2xl bg-resumeblue/5' : 'hover:scale-105 hover:shadow-lg'}
@@ -78,10 +82,16 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
           </div>
         </div>
         
-        {selected && <button className="btn-primary py-1 px-4 text-sm animate-fade-in">
+        {selected && (
+          <Button 
+            size="lg" 
+            className="w-full animate-fade-in text-base font-semibold"
+          >
             Continue
-          </button>}
+          </Button>
+        )}
       </div>
     </div>;
 };
+
 export default TemplateCard;
