@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -9,8 +8,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { 
-  ChevronDown, 
-  ChevronUp, 
+  ChevronDown,
   UserCircle, 
   GraduationCap,
   Briefcase,
@@ -21,8 +19,54 @@ import {
   Undo,
   Redo
 } from 'lucide-react';
+import BasicTemplate from '@/components/resume/BasicTemplate';
+import { ResumeData } from '@/types/resume';
 
 const ResumeEditor = () => {
+  const [resumeData, setResumeData] = useState<ResumeData>({
+    personalInfo: {
+      fullName: 'John Doe',
+      email: 'john@example.com',
+      phone: '(123) 456-7890',
+      location: 'New York, NY'
+    },
+    education: [{
+      school: 'University of Technology',
+      degree: 'Bachelor of Science in Computer Science',
+      year: '2019 - 2023',
+      gpa: '3.8'
+    }],
+    experience: [{
+      company: 'Tech Corp',
+      position: 'Software Engineer Intern',
+      period: 'Summer 2022',
+      description: [
+        'Developed and maintained web applications using React and TypeScript',
+        'Collaborated with team members using Git and Agile methodologies',
+        'Improved application performance by 40% through code optimization'
+      ]
+    }],
+    skills: [
+      'JavaScript',
+      'TypeScript',
+      'React',
+      'Node.js',
+      'Python',
+      'Git'
+    ],
+    projects: [{
+      name: 'Personal Portfolio',
+      description: 'Built a responsive portfolio website using React and Tailwind CSS'
+    }]
+  });
+
+  const handleInputChange = (section: keyof ResumeData, value: any) => {
+    setResumeData(prev => ({
+      ...prev,
+      [section]: value
+    }));
+  };
+
   return (
     <div className="h-screen flex flex-col">
       {/* Top Bar */}
@@ -61,11 +105,41 @@ const ResumeEditor = () => {
                   <input
                     type="text"
                     placeholder="Full Name"
+                    value={resumeData.personalInfo?.fullName || ''}
+                    onChange={(e) => handleInputChange('personalInfo', {
+                      ...resumeData.personalInfo,
+                      fullName: e.target.value
+                    })}
                     className="w-full p-2 border rounded"
                   />
                   <input
                     type="email"
                     placeholder="Email"
+                    value={resumeData.personalInfo?.email || ''}
+                    onChange={(e) => handleInputChange('personalInfo', {
+                      ...resumeData.personalInfo,
+                      email: e.target.value
+                    })}
+                    className="w-full p-2 border rounded"
+                  />
+                  <input
+                    type="tel"
+                    placeholder="Phone"
+                    value={resumeData.personalInfo?.phone || ''}
+                    onChange={(e) => handleInputChange('personalInfo', {
+                      ...resumeData.personalInfo,
+                      phone: e.target.value
+                    })}
+                    className="w-full p-2 border rounded"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Location"
+                    value={resumeData.personalInfo?.location || ''}
+                    onChange={(e) => handleInputChange('personalInfo', {
+                      ...resumeData.personalInfo,
+                      location: e.target.value
+                    })}
                     className="w-full p-2 border rounded"
                   />
                 </div>
@@ -148,12 +222,11 @@ const ResumeEditor = () => {
 
         {/* Right Panel - Preview */}
         <ResizablePanel defaultSize={60}>
-          <div className="h-full bg-gray-50 p-6">
-            <div className="bg-white shadow-lg rounded-lg p-8 min-h-full">
-              <h1 className="text-2xl font-bold mb-4">Resume Preview</h1>
-              <p className="text-gray-600">Your resume content will appear here in real-time as you type...</p>
+          <ScrollArea className="h-full bg-gray-50 p-6">
+            <div className="max-w-[850px] mx-auto">
+              <BasicTemplate data={resumeData} />
             </div>
-          </div>
+          </ScrollArea>
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>
