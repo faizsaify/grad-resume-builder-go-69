@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ThumbsUp, ThumbsDown, CheckCircle } from 'lucide-react';
 import { Button } from './ui/button';
@@ -50,7 +49,7 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
         </div>
       </div>
       
-      <div className="px-4 pt-4 flex-grow">
+      <div className="px-4 pt-4 pb-4 flex-grow">
         <div className="flex justify-between items-center mb-2">
           <h3 className={`
             font-medium text-lg
@@ -95,4 +94,3 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
 };
 
 export default TemplateCard;
-
