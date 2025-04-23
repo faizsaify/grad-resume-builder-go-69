@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Download } from 'lucide-react';
+import { downloadPDF } from '@/utils/pdfUtils';
+import { useToast } from '@/hooks/use-toast';
 import { 
   Collapsible,
   CollapsibleContent,
@@ -15,7 +18,6 @@ import {
   Wrench,
   Folder,
   Award,
-  Download,
   Undo,
   Redo
 } from 'lucide-react';
@@ -23,6 +25,7 @@ import BasicTemplate from '@/components/resume/BasicTemplate';
 import { ResumeData } from '@/types/resume';
 
 const ResumeEditor = () => {
+  const { toast } = useToast();
   const [resumeData, setResumeData] = useState<ResumeData>({
     personalInfo: {
       fullName: 'John Doe',
@@ -67,6 +70,22 @@ const ResumeEditor = () => {
     }));
   };
 
+  const handleExportPDF = async () => {
+    try {
+      await downloadPDF('resume-preview', 'my-resume.pdf');
+      toast({
+        title: "Success",
+        description: "Your resume has been downloaded as PDF",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to generate PDF. Please try again.",
+      });
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col">
       {/* Top Bar */}
@@ -83,7 +102,7 @@ const ResumeEditor = () => {
         </div>
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">Autosaving...</span>
-          <Button>
+          <Button onClick={handleExportPDF}>
             <Download className="h-4 w-4 mr-1" />
             Export PDF
           </Button>
@@ -223,7 +242,7 @@ const ResumeEditor = () => {
         {/* Right Panel - Preview */}
         <ResizablePanel defaultSize={60}>
           <ScrollArea className="h-full bg-gray-50 p-6">
-            <div className="max-w-[850px] mx-auto">
+            <div id="resume-preview" className="max-w-[850px] mx-auto">
               <BasicTemplate data={resumeData} />
             </div>
           </ScrollArea>
