@@ -1,7 +1,5 @@
-
 import React from 'react';
 import { ThumbsUp, ThumbsDown, CheckCircle } from 'lucide-react';
-
 export interface Template {
   id: string;
   name: string;
@@ -11,47 +9,36 @@ export interface Template {
   upvotes: number;
   downvotes: number;
 }
-
 interface TemplateCardProps {
   template: Template;
   selected: boolean;
   onSelect: (id: string) => void;
 }
-
-const TemplateCard: React.FC<TemplateCardProps> = ({ template, selected, onSelect }) => {
+const TemplateCard: React.FC<TemplateCardProps> = ({
+  template,
+  selected,
+  onSelect
+}) => {
   // Calculate score color based on ATS score
   const getScoreColor = (score: number) => {
     if (score >= 90) return 'bg-green-500';
     if (score >= 70) return 'bg-yellow-500';
     return 'bg-red-500';
   };
-  
-  return (
-    <div 
-      className={`
+  return <div className={`
         template-card 
-        ${selected 
-          ? 'ring-4 ring-resumeblue/70 scale-105 shadow-2xl bg-resumeblue/5' 
-          : 'hover:scale-105 hover:shadow-lg'}
+        ${selected ? 'ring-4 ring-resumeblue/70 scale-105 shadow-2xl bg-resumeblue/5' : 'hover:scale-105 hover:shadow-lg'}
         transition-all duration-300 ease-in-out cursor-pointer
-      `}
-      onClick={() => onSelect(template.id)}
-    >
+      `} onClick={() => onSelect(template.id)}>
       <div className="relative overflow-hidden">
-        <img 
-          src={template.image} 
-          alt={template.name} 
-          className={`
+        <img src={template.image} alt={template.name} className={`
             w-full h-64 object-cover object-top 
             transition-transform duration-700 
             ${selected ? 'brightness-90' : 'brightness-100'}
-          `}
-        />
-        {selected && (
-          <div className="absolute top-3 left-3 bg-resumeblue text-white rounded-full p-2 animate-fade-in">
-            <CheckCircle className="h-6 w-6" />
-          </div>
-        )}
+          `} />
+        {selected && <div className="absolute top-3 left-3 bg-resumeblue text-white rounded-full p-2 animate-fade-in">
+            <CheckCircle className="h-4 w-4" />
+          </div>}
         <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center text-xs font-medium">
           <span className={`h-2 w-2 ${getScoreColor(template.atsScore)} rounded-full mr-1`}></span>
           ATS Score: {template.atsScore}%
@@ -66,19 +53,12 @@ const TemplateCard: React.FC<TemplateCardProps> = ({ template, selected, onSelec
           {template.name}
         </h3>
         <div className="flex flex-wrap gap-1 mb-4">
-          {template.tags.map((tag, index) => (
-            <span 
-              key={index} 
-              className={`
+          {template.tags.map((tag, index) => <span key={index} className={`
                 text-xs px-2 py-1 rounded-full 
-                ${selected 
-                  ? 'bg-resumeblue/20 text-resumeblue' 
-                  : 'bg-resumeblue-light text-resumeblue'}
-              `}
-            >
+                ${selected ? 'bg-resumeblue/20 text-resumeblue' : 'bg-resumeblue-light text-resumeblue'}
+              `}>
               {tag}
-            </span>
-          ))}
+            </span>)}
         </div>
       </div>
       
@@ -98,14 +78,10 @@ const TemplateCard: React.FC<TemplateCardProps> = ({ template, selected, onSelec
           </div>
         </div>
         
-        {selected && (
-          <button className="btn-primary py-1 px-4 text-sm animate-fade-in">
+        {selected && <button className="btn-primary py-1 px-4 text-sm animate-fade-in">
             Continue
-          </button>
-        )}
+          </button>}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default TemplateCard;
