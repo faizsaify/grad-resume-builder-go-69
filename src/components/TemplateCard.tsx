@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ThumbsUp, ThumbsDown } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, CheckCircle } from 'lucide-react';
 
 export interface Template {
   id: string;
@@ -28,15 +28,30 @@ const TemplateCard: React.FC<TemplateCardProps> = ({ template, selected, onSelec
   
   return (
     <div 
-      className={`template-card ${selected ? 'selected' : ''}`}
+      className={`
+        template-card 
+        ${selected 
+          ? 'ring-4 ring-resumeblue/70 scale-105 shadow-2xl bg-resumeblue/5' 
+          : 'hover:scale-105 hover:shadow-lg'}
+        transition-all duration-300 ease-in-out cursor-pointer
+      `}
       onClick={() => onSelect(template.id)}
     >
       <div className="relative overflow-hidden">
         <img 
           src={template.image} 
           alt={template.name} 
-          className="w-full h-64 object-cover object-top transition-transform duration-700 hover:scale-105"
+          className={`
+            w-full h-64 object-cover object-top 
+            transition-transform duration-700 
+            ${selected ? 'brightness-90' : 'brightness-100'}
+          `}
         />
+        {selected && (
+          <div className="absolute top-3 left-3 bg-resumeblue text-white rounded-full p-2 animate-fade-in">
+            <CheckCircle className="h-6 w-6" />
+          </div>
+        )}
         <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center text-xs font-medium">
           <span className={`h-2 w-2 ${getScoreColor(template.atsScore)} rounded-full mr-1`}></span>
           ATS Score: {template.atsScore}%
@@ -44,12 +59,22 @@ const TemplateCard: React.FC<TemplateCardProps> = ({ template, selected, onSelec
       </div>
       
       <div className="p-4 flex-grow">
-        <h3 className="font-medium text-lg mb-2">{template.name}</h3>
+        <h3 className={`
+          font-medium text-lg mb-2 
+          ${selected ? 'text-resumeblue font-bold' : ''}
+        `}>
+          {template.name}
+        </h3>
         <div className="flex flex-wrap gap-1 mb-4">
           {template.tags.map((tag, index) => (
             <span 
               key={index} 
-              className="text-xs bg-resumeblue-light text-resumeblue px-2 py-1 rounded-full"
+              className={`
+                text-xs px-2 py-1 rounded-full 
+                ${selected 
+                  ? 'bg-resumeblue/20 text-resumeblue' 
+                  : 'bg-resumeblue-light text-resumeblue'}
+              `}
             >
               {tag}
             </span>
