@@ -1,7 +1,6 @@
 import React from 'react';
 import { ThumbsUp, ThumbsDown, CheckCircle } from 'lucide-react';
 import { Button } from './ui/button';
-
 export interface Template {
   id: string;
   name: string;
@@ -11,13 +10,11 @@ export interface Template {
   upvotes: number;
   downvotes: number;
 }
-
 interface TemplateCardProps {
   template: Template;
   selected: boolean;
   onSelect: (id: string) => void;
 }
-
 const TemplateCard: React.FC<TemplateCardProps> = ({
   template,
   selected,
@@ -28,7 +25,6 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
     if (score >= 70) return 'bg-yellow-500';
     return 'bg-red-500';
   };
-
   return <div className={`
         template-card 
         ${selected ? 'ring-4 ring-resumeblue/70 scale-105 shadow-2xl bg-resumeblue/5' : 'hover:scale-105 hover:shadow-lg'}
@@ -74,7 +70,7 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
             </button>
             <span>{template.upvotes}</span>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 px-[18px]">
             <button className="text-gray-400 hover:text-red-500 transition-colors">
               <ThumbsDown className="h-4 w-4" />
             </button>
@@ -82,16 +78,10 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
           </div>
         </div>
         
-        {selected && (
-          <Button 
-            size="lg" 
-            className="w-full animate-fade-in text-base font-semibold"
-          >
+        {selected && <Button size="lg" className="w-full animate-fade-in text-base font-semibold">
             Continue
-          </Button>
-        )}
+          </Button>}
       </div>
     </div>;
 };
-
 export default TemplateCard;
