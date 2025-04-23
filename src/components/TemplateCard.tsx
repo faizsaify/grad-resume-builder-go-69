@@ -83,9 +83,12 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
         </div>
       </div>
       
-      <div className="border-t border-gray-100 p-4">
+      <div className="border-t border-gray-100 p-3">
         {selected && (
-          <Button size="lg" className="w-full animate-fade-in text-base font-semibold">
+          <Button 
+            size="sm" 
+            className="w-full text-sm font-medium px-3 py-2"
+          >
             Continue
           </Button>
         )}
