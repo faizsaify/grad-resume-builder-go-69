@@ -1,73 +1,286 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Download } from 'lucide-react';
-import { downloadPDF } from '@/utils/pdfUtils';
+import {
+  LayoutGrid,
+  Undo,
+  Redo,
+  Download,
+  Moon,
+  Sun,
+  Plus,
+  Trash2
+} from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useToast } from '@/hooks/use-toast';
+import { downloadPDF } from '@/utils/pdfUtils';
 import { 
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { 
-  ChevronDown,
-  UserCircle, 
-  GraduationCap,
-  Briefcase,
-  Wrench,
-  Folder,
-  Award,
-  Undo,
-  Redo
-} from 'lucide-react';
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ChevronDown, UserCircle, GraduationCap, Briefcase, Wrench, Folder, Award } from 'lucide-react';
 import BasicTemplate from '@/components/resume/BasicTemplate';
 import { ResumeData } from '@/types/resume';
 
 const ResumeEditor = () => {
+  const { templateId } = useParams();
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [progress, setProgress] = useState(10);
+  const [isSaving, setIsSaving] = useState(false);
+  const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
   const { toast } = useToast();
   const [resumeData, setResumeData] = useState<ResumeData>({
     personalInfo: {
-      fullName: 'John Doe',
-      email: 'john@example.com',
-      phone: '(123) 456-7890',
-      location: 'New York, NY'
+      fullName: '',
+      email: '',
+      phone: '',
+      location: ''
     },
     education: [{
-      school: 'University of Technology',
-      degree: 'Bachelor of Science in Computer Science',
-      year: '2019 - 2023',
-      gpa: '3.8'
+      school: '',
+      degree: '',
+      year: '',
+      gpa: ''
     }],
     experience: [{
-      company: 'Tech Corp',
-      position: 'Software Engineer Intern',
-      period: 'Summer 2022',
-      description: [
-        'Developed and maintained web applications using React and TypeScript',
-        'Collaborated with team members using Git and Agile methodologies',
-        'Improved application performance by 40% through code optimization'
-      ]
+      company: '',
+      position: '',
+      period: '',
+      description: ['']
     }],
-    skills: [
-      'JavaScript',
-      'TypeScript',
-      'React',
-      'Node.js',
-      'Python',
-      'Git'
-    ],
+    skills: [],
     projects: [{
-      name: 'Personal Portfolio',
-      description: 'Built a responsive portfolio website using React and Tailwind CSS'
+      name: '',
+      description: ''
     }]
   });
 
-  const handleInputChange = (section: keyof ResumeData, value: any) => {
-    setResumeData(prev => ({
-      ...prev,
-      [section]: value
-    }));
+  useEffect(() => {
+    const calculateProgress = () => {
+      let totalFields = 0;
+      let filledFields = 0;
+      
+      if (resumeData.personalInfo) {
+        const personalFields = Object.keys(resumeData.personalInfo);
+        totalFields += personalFields.length;
+        filledFields += personalFields.filter(key => 
+          resumeData.personalInfo && resumeData.personalInfo[key as keyof typeof resumeData.personalInfo]
+        ).length;
+      }
+      
+      if (resumeData.education) {
+        resumeData.education.forEach(edu => {
+          totalFields += 4;
+          if (edu.school) filledFields += 1;
+          if (edu.degree) filledFields += 1;
+          if (edu.year) filledFields += 1;
+          if (edu.gpa) filledFields += 1;
+        });
+      }
+      
+      if (resumeData.experience) {
+        resumeData.experience.forEach(exp => {
+          totalFields += 3 + (exp.description?.length || 0);
+          if (exp.company) filledFields += 1;
+          if (exp.position) filledFields += 1;
+          if (exp.period) filledFields += 1;
+          filledFields += exp.description?.filter(desc => desc).length || 0;
+        });
+      }
+      
+      if (resumeData.skills) {
+        totalFields += Math.max(1, resumeData.skills.length);
+        filledFields += resumeData.skills.filter(skill => skill).length;
+      }
+      
+      if (resumeData.projects) {
+        resumeData.projects.forEach(proj => {
+          totalFields += 2;
+          if (proj.name) filledFields += 1;
+          if (proj.description) filledFields += 1;
+        });
+      }
+      
+      const percentage = totalFields > 0 
+        ? Math.min(100, Math.max(0, Math.round((filledFields / totalFields) * 100)))
+        : 0;
+      
+      setProgress(percentage);
+    };
+    
+    calculateProgress();
+  }, [resumeData]);
+
+  useEffect(() => {
+    const savingTimeout = setTimeout(() => {
+      setIsSaving(false);
+    }, 500);
+    
+    return () => clearTimeout(savingTimeout);
+  }, [resumeData]);
+
+  const handleInputChange = (section: keyof ResumeData, index: number, field: string, value: any) => {
+    setIsSaving(true);
+    
+    setResumeData(prev => {
+      const newData = { ...prev };
+      
+      if (section === 'personalInfo') {
+        newData.personalInfo = {
+          ...newData.personalInfo!,
+          [field]: value
+        };
+      } else if (section === 'education' && newData.education) {
+        newData.education = [...newData.education];
+        newData.education[index] = {
+          ...newData.education[index],
+          [field]: value
+        };
+      } else if (section === 'experience' && newData.experience) {
+        newData.experience = [...newData.experience];
+        
+        if (field.startsWith('description')) {
+          const descIndex = parseInt(field.split('-')[1]);
+          newData.experience[index] = {
+            ...newData.experience[index],
+            description: [...newData.experience[index].description]
+          };
+          newData.experience[index].description[descIndex] = value;
+        } else {
+          newData.experience[index] = {
+            ...newData.experience[index],
+            [field]: value
+          };
+        }
+      } else if (section === 'skills') {
+        newData.skills = [...(newData.skills || [])];
+        newData.skills[index] = value;
+      } else if (section === 'projects' && newData.projects) {
+        newData.projects = [...newData.projects];
+        newData.projects[index] = {
+          ...newData.projects[index],
+          [field]: value
+        };
+      }
+      
+      return newData;
+    });
+  };
+
+  const addItem = (section: keyof ResumeData) => {
+    setIsSaving(true);
+    setResumeData(prev => {
+      const newData = { ...prev };
+      
+      if (section === 'education' && newData.education) {
+        newData.education = [
+          ...newData.education, 
+          { school: '', degree: '', year: '', gpa: '' }
+        ];
+      } else if (section === 'experience' && newData.experience) {
+        newData.experience = [
+          ...newData.experience, 
+          { company: '', position: '', period: '', description: [''] }
+        ];
+      } else if (section === 'skills') {
+        newData.skills = [...(newData.skills || []), ''];
+      } else if (section === 'projects' && newData.projects) {
+        newData.projects = [
+          ...newData.projects, 
+          { name: '', description: '' }
+        ];
+      }
+      
+      return newData;
+    });
+    
+    toast({
+      title: "Added new item",
+      description: `Added new item to ${section}`,
+    });
+  };
+
+  const removeItem = (section: keyof ResumeData, index: number) => {
+    setIsSaving(true);
+    setResumeData(prev => {
+      const newData = { ...prev };
+      
+      if (section === 'education' && newData.education) {
+        newData.education = newData.education.filter((_, i) => i !== index);
+        if (newData.education.length === 0) {
+          newData.education = [{ school: '', degree: '', year: '', gpa: '' }];
+        }
+      } else if (section === 'experience' && newData.experience) {
+        newData.experience = newData.experience.filter((_, i) => i !== index);
+        if (newData.experience.length === 0) {
+          newData.experience = [{ company: '', position: '', period: '', description: [''] }];
+        }
+      } else if (section === 'skills' && newData.skills) {
+        newData.skills = newData.skills.filter((_, i) => i !== index);
+      } else if (section === 'projects' && newData.projects) {
+        newData.projects = newData.projects.filter((_, i) => i !== index);
+        if (newData.projects.length === 0) {
+          newData.projects = [{ name: '', description: '' }];
+        }
+      }
+      
+      return newData;
+    });
+    
+    toast({
+      title: "Removed item",
+      description: `Removed item from ${section}`,
+    });
+  };
+
+  const addDescriptionField = (experienceIndex: number) => {
+    setIsSaving(true);
+    setResumeData(prev => {
+      const newData = { ...prev };
+      if (newData.experience) {
+        newData.experience = [...newData.experience];
+        newData.experience[experienceIndex] = {
+          ...newData.experience[experienceIndex],
+          description: [...newData.experience[experienceIndex].description, '']
+        };
+      }
+      return newData;
+    });
+  };
+
+  const removeDescriptionField = (experienceIndex: number, descriptionIndex: number) => {
+    setIsSaving(true);
+    setResumeData(prev => {
+      const newData = { ...prev };
+      if (newData.experience) {
+        newData.experience = [...newData.experience];
+        newData.experience[experienceIndex] = {
+          ...newData.experience[experienceIndex],
+          description: newData.experience[experienceIndex].description.filter((_, i) => i !== descriptionIndex)
+        };
+        if (newData.experience[experienceIndex].description.length === 0) {
+          newData.experience[experienceIndex].description = [''];
+        }
+      }
+      return newData;
+    });
   };
 
   const handleExportPDF = async () => {
@@ -86,194 +299,565 @@ const ResumeEditor = () => {
     }
   };
 
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+    toast({
+      title: `${isDarkMode ? 'Light' : 'Dark'} mode enabled`,
+      description: `Switched to ${isDarkMode ? 'light' : 'dark'} mode`,
+    });
+  };
+
+  const handleUndo = () => {
+    toast({
+      title: "Undo",
+      description: "Previous action undone",
+    });
+  };
+
+  const handleRedo = () => {
+    toast({
+      title: "Redo",
+      description: "Action restored",
+    });
+  };
+
   return (
-    <div className="h-screen flex flex-col">
-      {/* Top Bar */}
-      <div className="border-b p-4 flex justify-between items-center bg-white">
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
-            <Undo className="h-4 w-4 mr-1" />
-            Undo
-          </Button>
-          <Button variant="outline" size="sm">
-            <Redo className="h-4 w-4 mr-1" />
-            Redo
-          </Button>
+    <div className={`h-screen flex flex-col ${isDarkMode ? 'dark bg-gray-900 text-white' : 'bg-white text-resumetext'}`}>
+      <div className={`
+        border-b p-3 flex justify-between items-center sticky top-0 z-10
+        ${isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white'}
+      `}>
+        <div className="flex items-center gap-3">
+          <span className="text-xl font-bold text-resumeblue">ResumeAI</span>
+          
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon" className="md:hidden">
+                <LayoutGrid className="h-4 w-4" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[300px]">
+              <div className="space-y-4 py-4">
+                <h2 className="text-lg font-semibold">Resume Editor</h2>
+                <div className="space-y-2">
+                  <Button variant="outline" size="sm" onClick={handleUndo} className="w-full justify-start">
+                    <Undo className="h-4 w-4 mr-2" />
+                    Undo
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={handleRedo} className="w-full justify-start">
+                    <Redo className="h-4 w-4 mr-2" />
+                    Redo
+                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm" className="w-full justify-start">
+                        <LayoutGrid className="h-4 w-4 mr-2" />
+                        Change Template
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem>Modern</DropdownMenuItem>
+                      <DropdownMenuItem>Classic</DropdownMenuItem>
+                      <DropdownMenuItem>Minimal</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <Button variant="outline" size="sm" onClick={toggleDarkMode} className="w-full justify-start">
+                    {isDarkMode ? 
+                      <><Sun className="h-4 w-4 mr-2" />Light Mode</> : 
+                      <><Moon className="h-4 w-4 mr-2" />Dark Mode</>
+                    }
+                  </Button>
+                  <Button size="sm" onClick={handleExportPDF} className="w-full justify-start">
+                    <Download className="h-4 w-4 mr-2" />
+                    Export PDF
+                  </Button>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
+
+        <div className="hidden md:flex items-center gap-4 flex-grow max-w-md mx-4">
+          <Progress value={progress} className="h-2" />
+          <span className="text-sm whitespace-nowrap">
+            {isSaving ? 'Saving...' : 'All changes saved'}
+          </span>
+        </div>
+        
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Autosaving...</span>
-          <Button onClick={handleExportPDF}>
-            <Download className="h-4 w-4 mr-1" />
+          <Button variant="ghost" size="icon" onClick={handleUndo} className="hidden md:flex">
+            <Undo className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={handleRedo} className="hidden md:flex">
+            <Redo className="h-4 w-4" />
+          </Button>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="hidden md:flex">
+                <LayoutGrid className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem>Modern</DropdownMenuItem>
+              <DropdownMenuItem>Classic</DropdownMenuItem>
+              <DropdownMenuItem>Minimal</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
+          <Button variant="ghost" size="icon" onClick={toggleDarkMode} className="hidden md:flex">
+            {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </Button>
+          
+          <Button onClick={handleExportPDF} className="hidden md:flex">
+            <Download className="h-4 w-4 mr-2" />
             Export PDF
           </Button>
         </div>
       </div>
 
-      {/* Main Content */}
-      <ResizablePanelGroup direction="horizontal" className="flex-1">
-        {/* Left Panel - Form */}
-        <ResizablePanel defaultSize={40} minSize={30}>
+      <ResizablePanelGroup 
+        direction="horizontal" 
+        className="flex-1"
+      >
+        <ResizablePanel defaultSize={60} minSize={30}>
           <ScrollArea className="h-full">
-            <div className="p-6 space-y-6">
+            <div className={`p-6 space-y-6 ${isDarkMode ? 'text-gray-200' : ''}`}>
               <EditorSection
-                icon={<UserCircle />}
-                title="Personal Info"
+                id="personalInfo"
+                icon={<UserCircle className="h-5 w-5" />}
+                title="Personal Information"
+                isActive={activeSectionId === 'personalInfo'}
+                onToggle={() => setActiveSectionId(activeSectionId === 'personalInfo' ? null : 'personalInfo')}
                 defaultOpen={true}
               >
-                <div className="space-y-4">
-                  <input
-                    type="text"
-                    placeholder="Full Name"
-                    value={resumeData.personalInfo?.fullName || ''}
-                    onChange={(e) => handleInputChange('personalInfo', {
-                      ...resumeData.personalInfo,
-                      fullName: e.target.value
-                    })}
-                    className="w-full p-2 border rounded"
-                  />
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    value={resumeData.personalInfo?.email || ''}
-                    onChange={(e) => handleInputChange('personalInfo', {
-                      ...resumeData.personalInfo,
-                      email: e.target.value
-                    })}
-                    className="w-full p-2 border rounded"
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Phone"
-                    value={resumeData.personalInfo?.phone || ''}
-                    onChange={(e) => handleInputChange('personalInfo', {
-                      ...resumeData.personalInfo,
-                      phone: e.target.value
-                    })}
-                    className="w-full p-2 border rounded"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Location"
-                    value={resumeData.personalInfo?.location || ''}
-                    onChange={(e) => handleInputChange('personalInfo', {
-                      ...resumeData.personalInfo,
-                      location: e.target.value
-                    })}
-                    className="w-full p-2 border rounded"
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Full Name</label>
+                    <Input 
+                      placeholder="e.g. John Smith" 
+                      value={resumeData.personalInfo?.fullName || ''}
+                      onChange={(e) => handleInputChange('personalInfo', 0, 'fullName', e.target.value)}
+                      className={isDarkMode ? 'bg-gray-800 border-gray-700' : ''}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Email</label>
+                    <Input 
+                      placeholder="e.g. john@example.com" 
+                      type="email"
+                      value={resumeData.personalInfo?.email || ''}
+                      onChange={(e) => handleInputChange('personalInfo', 0, 'email', e.target.value)}
+                      className={isDarkMode ? 'bg-gray-800 border-gray-700' : ''}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Phone</label>
+                    <Input 
+                      placeholder="e.g. (123) 456-7890" 
+                      value={resumeData.personalInfo?.phone || ''}
+                      onChange={(e) => handleInputChange('personalInfo', 0, 'phone', e.target.value)}
+                      className={isDarkMode ? 'bg-gray-800 border-gray-700' : ''}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Location</label>
+                    <Input 
+                      placeholder="e.g. New York, NY" 
+                      value={resumeData.personalInfo?.location || ''}
+                      onChange={(e) => handleInputChange('personalInfo', 0, 'location', e.target.value)}
+                      className={isDarkMode ? 'bg-gray-800 border-gray-700' : ''}
+                    />
+                  </div>
                 </div>
               </EditorSection>
 
               <EditorSection
-                icon={<GraduationCap />}
+                id="education"
+                icon={<GraduationCap className="h-5 w-5" />}
                 title="Education"
+                isActive={activeSectionId === 'education'}
+                onToggle={() => setActiveSectionId(activeSectionId === 'education' ? null : 'education')}
               >
-                <div className="space-y-4">
-                  <input
-                    type="text"
-                    placeholder="School Name"
-                    className="w-full p-2 border rounded"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Degree"
-                    className="w-full p-2 border rounded"
-                  />
-                </div>
+                {resumeData.education?.map((edu, index) => (
+                  <div 
+                    key={index} 
+                    className={`
+                      p-4 rounded-lg mb-4 relative
+                      ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}
+                    `}
+                  >
+                    {resumeData.education!.length > 1 && (
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        className="absolute right-2 top-2"
+                        onClick={() => removeItem('education', index)}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    )}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">School</label>
+                        <Input 
+                          placeholder="e.g. University of Technology" 
+                          value={edu.school}
+                          onChange={(e) => handleInputChange('education', index, 'school', e.target.value)}
+                          className={isDarkMode ? 'bg-gray-700 border-gray-600' : ''}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Degree</label>
+                        <Input 
+                          placeholder="e.g. Bachelor of Science in Computer Science" 
+                          value={edu.degree}
+                          onChange={(e) => handleInputChange('education', index, 'degree', e.target.value)}
+                          className={isDarkMode ? 'bg-gray-700 border-gray-600' : ''}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Year</label>
+                        <Input 
+                          placeholder="e.g. 2019 - 2023" 
+                          value={edu.year}
+                          onChange={(e) => handleInputChange('education', index, 'year', e.target.value)}
+                          className={isDarkMode ? 'bg-gray-700 border-gray-600' : ''}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">GPA (Optional)</label>
+                        <Input 
+                          placeholder="e.g. 3.8/4.0" 
+                          value={edu.gpa || ''}
+                          onChange={(e) => handleInputChange('education', index, 'gpa', e.target.value)}
+                          className={isDarkMode ? 'bg-gray-700 border-gray-600' : ''}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full mt-2"
+                  onClick={() => addItem('education')}
+                >
+                  <Plus className="h-4 w-4 mr-2" /> Add Education
+                </Button>
               </EditorSection>
 
               <EditorSection
-                icon={<Briefcase />}
+                id="experience"
+                icon={<Briefcase className="h-5 w-5" />}
                 title="Experience"
+                isActive={activeSectionId === 'experience'}
+                onToggle={() => setActiveSectionId(activeSectionId === 'experience' ? null : 'experience')}
+              >
+                {resumeData.experience?.map((exp, index) => (
+                  <div 
+                    key={index} 
+                    className={`
+                      p-4 rounded-lg mb-4 relative
+                      ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}
+                    `}
+                  >
+                    {resumeData.experience!.length > 1 && (
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        className="absolute right-2 top-2"
+                        onClick={() => removeItem('experience', index)}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    )}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Company</label>
+                        <Input 
+                          placeholder="e.g. Tech Corp" 
+                          value={exp.company}
+                          onChange={(e) => handleInputChange('experience', index, 'company', e.target.value)}
+                          className={isDarkMode ? 'bg-gray-700 border-gray-600' : ''}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Position</label>
+                        <Input 
+                          placeholder="e.g. Software Engineer Intern" 
+                          value={exp.position}
+                          onChange={(e) => handleInputChange('experience', index, 'position', e.target.value)}
+                          className={isDarkMode ? 'bg-gray-700 border-gray-600' : ''}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Period</label>
+                        <Input 
+                          placeholder="e.g. June 2022 - August 2022" 
+                          value={exp.period}
+                          onChange={(e) => handleInputChange('experience', index, 'period', e.target.value)}
+                          className={isDarkMode ? 'bg-gray-700 border-gray-600' : ''}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-4">
+                      <label className="text-sm font-medium">Description</label>
+                      <p className="text-xs text-muted-foreground mb-2">Add bullet points highlighting your achievements and responsibilities</p>
+                      
+                      {exp.description.map((desc, descIndex) => (
+                        <div key={descIndex} className="flex items-start gap-2 mb-2">
+                          <div className="mt-2">•</div>
+                          <Input
+                            placeholder="e.g. Developed and maintained web applications using React"
+                            value={desc}
+                            onChange={(e) => handleInputChange(
+                              'experience', 
+                              index, 
+                              `description-${descIndex}`, 
+                              e.target.value
+                            )}
+                            className={isDarkMode ? 'bg-gray-700 border-gray-600' : ''}
+                          />
+                          {exp.description.length > 1 && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="mt-1"
+                              onClick={() => removeDescriptionField(index, descIndex)}
+                            >
+                              <Trash2 className="h-3 w-3 text-red-500" />
+                            </Button>
+                          )}
+                        </div>
+                      ))}
+                      
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="text-xs mt-1"
+                        onClick={() => addDescriptionField(index)}
+                      >
+                        <Plus className="h-3 w-3 mr-1" /> Add Bullet Point
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full mt-2"
+                  onClick={() => addItem('experience')}
+                >
+                  <Plus className="h-4 w-4 mr-2" /> Add Experience
+                </Button>
+              </EditorSection>
+
+              <EditorSection
+                id="skills"
+                icon={<Wrench className="h-5 w-5" />}
+                title="Skills"
+                isActive={activeSectionId === 'skills'}
+                onToggle={() => setActiveSectionId(activeSectionId === 'skills' ? null : 'skills')}
               >
                 <div className="space-y-4">
-                  <input
-                    type="text"
-                    placeholder="Company Name"
-                    className="w-full p-2 border rounded"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Position"
-                    className="w-full p-2 border rounded"
-                  />
+                  <div className="flex flex-wrap gap-2">
+                    {resumeData.skills && resumeData.skills.map((skill, index) => (
+                      <div 
+                        key={index} 
+                        className={`
+                          pl-3 pr-1 py-1 rounded-full flex items-center gap-1 text-sm
+                          ${isDarkMode ? 'bg-gray-800' : 'bg-resumeblue-light text-resumeblue'}
+                        `}
+                      >
+                        <span>{skill || 'New Skill'}</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-5 w-5 rounded-full"
+                          onClick={() => removeItem('skills', index)}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <Input 
+                      placeholder="Add a skill (e.g. JavaScript, Teamwork)" 
+                      id="new-skill"
+                      className={isDarkMode ? 'bg-gray-700 border-gray-600' : ''}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          const input = e.target as HTMLInputElement;
+                          if (input.value) {
+                            handleInputChange('skills', resumeData.skills?.length || 0, '', input.value);
+                            input.value = '';
+                          }
+                        }
+                      }}
+                    />
+                    <Button 
+                      variant="outline"
+                      onClick={() => {
+                        const input = document.getElementById('new-skill') as HTMLInputElement;
+                        if (input.value) {
+                          handleInputChange('skills', resumeData.skills?.length || 0, '', input.value);
+                          input.value = '';
+                        }
+                      }}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Press Enter to add a skill or click the + button</p>
                 </div>
               </EditorSection>
 
               <EditorSection
-                icon={<Wrench />}
-                title="Skills"
-              >
-                <input
-                  type="text"
-                  placeholder="Add your skills"
-                  className="w-full p-2 border rounded"
-                />
-              </EditorSection>
-
-              <EditorSection
-                icon={<Folder />}
+                id="projects"
+                icon={<Folder className="h-5 w-5" />}
                 title="Projects"
+                isActive={activeSectionId === 'projects'}
+                onToggle={() => setActiveSectionId(activeSectionId === 'projects' ? null : 'projects')}
               >
-                <input
-                  type="text"
-                  placeholder="Project Name"
-                  className="w-full p-2 border rounded"
-                />
+                {resumeData.projects?.map((project, index) => (
+                  <div 
+                    key={index} 
+                    className={`
+                      p-4 rounded-lg mb-4 relative
+                      ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}
+                    `}
+                  >
+                    {resumeData.projects!.length > 1 && (
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        className="absolute right-2 top-2"
+                        onClick={() => removeItem('projects', index)}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    )}
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Project Name</label>
+                        <Input 
+                          placeholder="e.g. E-commerce Website" 
+                          value={project.name}
+                          onChange={(e) => handleInputChange('projects', index, 'name', e.target.value)}
+                          className={isDarkMode ? 'bg-gray-700 border-gray-600' : ''}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Description</label>
+                        <Textarea 
+                          placeholder="e.g. Built a responsive e-commerce website using React and Node.js" 
+                          value={project.description}
+                          onChange={(e) => handleInputChange('projects', index, 'description', e.target.value)}
+                          className={isDarkMode ? 'bg-gray-700 border-gray-600 min-h-[80px]' : 'min-h-[80px]'}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full mt-2"
+                  onClick={() => addItem('projects')}
+                >
+                  <Plus className="h-4 w-4 mr-2" /> Add Project
+                </Button>
               </EditorSection>
 
               <EditorSection
-                icon={<Award />}
-                title="Extras"
+                id="extras"
+                icon={<Award className="h-5 w-5" />}
+                title="Extras (Certifications, Languages, Awards)"
+                isActive={activeSectionId === 'extras'}
+                onToggle={() => setActiveSectionId(activeSectionId === 'extras' ? null : 'extras')}
               >
-                <input
-                  type="text"
-                  placeholder="Certifications, Awards, Languages..."
-                  className="w-full p-2 border rounded"
-                />
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Add any additional information</label>
+                  <Textarea 
+                    placeholder="e.g. Certifications, Languages, Awards, etc." 
+                    className={`${isDarkMode ? 'bg-gray-700 border-gray-600' : ''} min-h-[150px]`}
+                  />
+                </div>
               </EditorSection>
             </div>
           </ScrollArea>
         </ResizablePanel>
 
-        {/* Resizable Handle */}
         <ResizableHandle withHandle />
 
-        {/* Right Panel - Preview */}
-        <ResizablePanel defaultSize={60}>
-          <ScrollArea className="h-full bg-gray-50 p-6">
-            <div id="resume-preview" className="max-w-[850px] mx-auto">
+        <ResizablePanel defaultSize={40}>
+          <ScrollArea className={`h-full ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'} p-6`}>
+            <div id="resume-preview" className={`
+              max-w-[850px] mx-auto shadow-lg
+              ${isDarkMode ? 'bg-white' : 'bg-white'}
+            `}>
               <BasicTemplate data={resumeData} />
             </div>
           </ScrollArea>
         </ResizablePanel>
       </ResizablePanelGroup>
+      
+      <div className="md:hidden border-t p-3 flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <Progress value={progress} className="w-16 h-2" />
+          <span className="text-xs">
+            {isSaving ? 'Saving...' : 'All changes saved'}
+          </span>
+        </div>
+        
+        <Button onClick={handleExportPDF} size="sm">
+          <Download className="h-4 w-4 mr-1" />
+          Export PDF
+        </Button>
+      </div>
     </div>
   );
 };
 
-// Editor Section Component
-const EditorSection = ({ 
-  icon, 
-  title, 
-  children,
-  defaultOpen = false 
-}: { 
+interface EditorSectionProps {
+  id: string;
   icon: React.ReactNode;
   title: string;
   children: React.ReactNode;
   defaultOpen?: boolean;
+  isActive: boolean;
+  onToggle: () => void;
+}
+
+const EditorSection: React.FC<EditorSectionProps> = ({ 
+  id,
+  icon, 
+  title, 
+  children,
+  defaultOpen = false,
+  isActive,
+  onToggle
 }) => {
   return (
-    <Collapsible defaultOpen={defaultOpen} className="space-y-2">
-      <CollapsibleTrigger className="flex items-center gap-2 w-full p-2 hover:bg-gray-50 rounded-lg transition-colors">
+    <Collapsible defaultOpen={defaultOpen} className={`
+      space-y-2 p-4 rounded-lg border transition-all duration-200
+      ${isActive ? 'ring-2 ring-resumeblue-light' : ''}
+    `}>
+      <CollapsibleTrigger 
+        className="flex items-center gap-2 w-full p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors"
+        onClick={onToggle}
+      >
         <div className="flex-1 flex items-center gap-2">
           {icon}
           <span className="font-medium">{title}</span>
         </div>
         <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200" />
       </CollapsibleTrigger>
-      <CollapsibleContent className="space-y-4">
+      <CollapsibleContent className="space-y-4 pt-4">
         {children}
       </CollapsibleContent>
     </Collapsible>

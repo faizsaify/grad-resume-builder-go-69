@@ -4,6 +4,7 @@ export interface PersonalInfo {
   email: string;
   phone?: string;
   location?: string;
+  [key: string]: string | undefined;
 }
 
 export interface Education {
@@ -31,4 +32,5 @@ export interface ResumeData {
   experience?: Experience[];
   skills?: string[];
   projects?: Project[];
+  extras?: string;
 }
