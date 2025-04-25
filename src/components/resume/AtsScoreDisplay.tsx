@@ -9,16 +9,19 @@ const AtsScoreDisplay: React.FC<AtsScoreDisplayProps> = ({
   score = 85
 }) => {
   const getScoreColor = () => {
-    if (score < 50) return '#ea384c'; // red
-    if (score < 80) return '#FEF7CD'; // yellow
-    return '#F2FCE2'; // green
+    if (score < 50) return '#FF4D4D';   // Bright Red for low scores
+    if (score < 80) return '#FFA500';   // Vibrant Orange for medium scores
+    return '#4CAF50';   // Bright Green for high scores
   };
 
   return (
     <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 text-sm">
       <div 
-        className="h-2.5 w-2.5 rounded-full"
-        style={{ backgroundColor: getScoreColor() }}
+        className="h-3 w-3 rounded-full"
+        style={{ 
+          backgroundColor: getScoreColor(),
+          boxShadow: '0 0 5px rgba(0,0,0,0.3)'
+        }}
       />
       <span className="font-medium text-resumeblue">{score}%</span>
     </div>
