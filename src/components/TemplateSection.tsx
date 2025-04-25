@@ -1,13 +1,14 @@
 
 import React, { useState } from 'react';
 import TemplateCard, { Template } from './TemplateCard';
+import { AspectRatio } from './ui/aspect-ratio';
 
-// Template data with proper references to template components
+// Template data with proper image references and paths
 const templateData: Template[] = [
   {
     id: '1',
     name: 'Modern Minimal',
-    image: '/lovable-uploads/2f100a29-1e6d-483b-8b98-d8fc38b6adef.png', // Updated image URL
+    image: '/lovable-uploads/2f100a29-1e6d-483b-8b98-d8fc38b6adef.png',
     atsScore: 95,
     tags: ['Modern', 'Minimalist', 'Professional'],
     upvotes: 382,

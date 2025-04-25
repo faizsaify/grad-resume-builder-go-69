@@ -1,7 +1,9 @@
+
 import React from 'react';
 import { ThumbsUp, ThumbsDown, CheckCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
+import { AspectRatio } from './ui/aspect-ratio';
 
 export interface Template {
   id: string;
@@ -31,24 +33,38 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
     return 'bg-red-500';
   };
 
-  return <div className={`
+  return (
+    <div 
+      className={`
         template-card 
         ${selected ? 'ring-4 ring-resumeblue/70 scale-105 shadow-2xl bg-resumeblue/5' : 'hover:scale-105 hover:shadow-lg'}
         transition-all duration-300 ease-in-out cursor-pointer
-      `} onClick={() => onSelect(template.id)}>
+      `} 
+      onClick={() => onSelect(template.id)}
+    >
       <div className="relative overflow-hidden">
-        <img 
-          src={template.image} 
-          alt={template.name} 
-          className={`
-            w-full h-64 object-cover object-top 
-            transition-transform duration-700 
-            ${selected ? 'brightness-90' : 'brightness-100'}
-          `} 
-        />
-        {selected && <div className="absolute top-3 left-3 bg-resumeblue text-white rounded-full p-2 animate-fade-in">
+        <AspectRatio ratio={4/3}>
+          <img 
+            src={template.image} 
+            alt={template.name} 
+            className={`
+              w-full h-full object-cover object-top 
+              transition-transform duration-700 
+              ${selected ? 'brightness-90' : 'brightness-100'}
+            `} 
+            onError={(e) => {
+              console.error(`Failed to load image for template: ${template.name}`);
+              const target = e.target as HTMLImageElement;
+              target.onerror = null;
+              target.src = 'https://placehold.co/600x400?text=Template+Preview';
+            }}
+          />
+        </AspectRatio>
+        {selected && (
+          <div className="absolute top-3 left-3 bg-resumeblue text-white rounded-full p-2 animate-fade-in">
             <CheckCircle className="h-4 w-4" />
-          </div>}
+          </div>
+        )}
         <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center text-xs font-medium">
           <span className={`h-2 w-2 ${getScoreColor(template.atsScore)} rounded-full mr-1`}></span>
           ATS Score: {template.atsScore}%
@@ -80,12 +96,17 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
         </div>
 
         <div className="flex flex-wrap gap-1 mb-4">
-          {template.tags.map((tag, index) => <span key={index} className={`
+          {template.tags.map((tag, index) => (
+            <span 
+              key={index} 
+              className={`
                 text-xs px-2 py-1 rounded-full 
                 ${selected ? 'bg-resumeblue/20 text-resumeblue' : 'bg-resumeblue-light text-resumeblue'}
-              `}>
+              `}
+            >
               {tag}
-            </span>)}
+            </span>
+          ))}
         </div>
       </div>
       
@@ -104,7 +125,8 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
           </Link>
         )}
       </div>
-    </div>;
+    </div>
+  );
 };
 
 export default TemplateCard;
