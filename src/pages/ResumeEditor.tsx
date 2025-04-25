@@ -418,7 +418,7 @@ const ResumeEditor = () => {
       
       <div className="flex justify-between items-center px-6 py-3 bg-gray-50 dark:bg-gray-800">
         <div className="w-3/5 pr-4">
-          <div className="md:flex items-center gap-4 hidden">
+          <div className="md:flex items-center gap-4 hidden w-full">
             <Progress value={progress} className="h-3 flex-1 bg-gray-200 dark:bg-gray-700" />
             <span className="text-sm whitespace-nowrap font-medium">
               {progress}%
