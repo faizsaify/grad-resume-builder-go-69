@@ -38,6 +38,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ChevronDown, UserCircle, GraduationCap, Briefcase, Wrench, Folder, Award } from 'lucide-react';
 import BasicTemplate from '@/components/resume/BasicTemplate';
 import { ResumeData } from '@/types/resume';
+import AtsScoreDisplay from '@/components/resume/AtsScoreDisplay';
 
 const ResumeEditor = () => {
   const { templateId } = useParams();
@@ -795,7 +796,8 @@ const ResumeEditor = () => {
         <ResizableHandle withHandle />
 
         <ResizablePanel defaultSize={40}>
-          <ScrollArea className={`h-full ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'} p-6`}>
+          <ScrollArea className={`h-full ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'} p-6 relative`}>
+            <AtsScoreDisplay />
             <div id="resume-preview" className={`
               max-w-[850px] mx-auto shadow-lg
               ${isDarkMode ? 'bg-white' : 'bg-white'}
