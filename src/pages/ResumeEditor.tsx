@@ -378,8 +378,7 @@ const ResumeEditor = () => {
           </Sheet>
         </div>
 
-        <div className="hidden md:flex items-center gap-4 flex-grow max-w-md mx-4">
-          <Progress value={progress} className="h-2" />
+        <div className="hidden items-center gap-4 flex-grow max-w-md mx-4">
           <span className="text-sm whitespace-nowrap">
             {isSaving ? 'Saving...' : 'All changes saved'}
           </span>
@@ -418,17 +417,19 @@ const ResumeEditor = () => {
       </div>
       
       <div className="flex justify-between items-center px-6 py-2">
-        <div className="md:hidden flex items-center gap-2">
-          <Progress value={progress} className="w-16 h-2" />
-          <span className="text-xs">
-            {isSaving ? 'Saving...' : 'All changes saved'}
-          </span>
-        </div>
-        <div className="hidden md:flex justify-end items-center gap-4">
-          <Progress value={progress} className="h-2 w-32" />
-          <span className="text-sm whitespace-nowrap">
-            {isSaving ? 'Saving...' : 'All changes saved'}
-          </span>
+        <div className="flex-1 pr-4">
+          <div className="md:flex items-center gap-4 hidden">
+            <Progress value={progress} className="h-2 flex-1" />
+            <span className="text-sm whitespace-nowrap">
+              {isSaving ? 'Saving...' : 'All changes saved'}
+            </span>
+          </div>
+          <div className="md:hidden flex items-center gap-2">
+            <Progress value={progress} className="h-2 flex-1" />
+            <span className="text-xs">
+              {isSaving ? 'Saving...' : 'All changes saved'}
+            </span>
+          </div>
         </div>
         <AtsScoreDisplay />
       </div>
@@ -825,12 +826,9 @@ const ResumeEditor = () => {
       </ResizablePanelGroup>
       
       <div className="md:hidden border-t p-3 flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <Progress value={progress} className="w-16 h-2" />
-          <span className="text-xs">
-            {isSaving ? 'Saving...' : 'All changes saved'}
-          </span>
-        </div>
+        <span className="text-xs">
+          {isSaving ? 'Saving...' : 'All changes saved'}
+        </span>
         
         <div className="flex items-center gap-2">
           <Button onClick={handleExportPDF} size="sm">

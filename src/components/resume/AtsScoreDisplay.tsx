@@ -20,10 +20,10 @@ const AtsScoreDisplay: React.FC<AtsScoreDisplayProps> = ({
         className="h-3 w-3 rounded-full"
         style={{ 
           backgroundColor: getScoreColor(),
-          boxShadow: '0 0 5px rgba(0,0,0,0.3)'
+          boxShadow: `0 0 6px ${getScoreColor()}` 
         }}
       />
-      <span className="font-medium text-resumeblue">{score}%</span>
+      <span className="font-medium text-resumeblue">{score}% ATS</span>
     </div>
   );
 };
