@@ -414,12 +414,12 @@ const ResumeEditor = () => {
             <Download className="h-4 w-4 mr-2" />
             Export PDF
           </Button>
-        
-        <div className="hidden md:block">
-          <AtsScoreDisplay />
         </div>
       </div>
-    </div>
+      
+      <div className="flex justify-end px-6 py-2">
+        <AtsScoreDisplay />
+      </div>
 
       <ResizablePanelGroup 
         direction="horizontal" 
@@ -821,12 +821,15 @@ const ResumeEditor = () => {
         </div>
         
         <div className="flex items-center gap-2">
-          <AtsScoreDisplay />
           <Button onClick={handleExportPDF} size="sm">
             <Download className="h-4 w-4 mr-1" />
             Export PDF
           </Button>
         </div>
+      </div>
+      
+      <div className="md:hidden flex justify-center py-2">
+        <AtsScoreDisplay />
       </div>
     </div>
   );
