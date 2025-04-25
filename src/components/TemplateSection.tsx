@@ -7,7 +7,7 @@ const templateData: Template[] = [
   {
     id: '1',
     name: 'Modern Minimal',
-    image: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=2000&auto=format&fit=crop',
+    image: '/lovable-uploads/fcf5ec96-acb3-47c0-b223-16f96e5323fe.png', // Updated image for Modern Minimal
     atsScore: 95,
     tags: ['Modern', 'Minimalist', 'Professional'],
     upvotes: 382,

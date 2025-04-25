@@ -38,7 +38,7 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
       `} onClick={() => onSelect(template.id)}>
       <div className="relative overflow-hidden">
         <img 
-          src="/lovable-uploads/fcf5ec96-acb3-47c0-b223-16f96e5323fe.png" 
+          src={template.image} 
           alt={template.name} 
           className={`
             w-full h-64 object-cover object-top 
