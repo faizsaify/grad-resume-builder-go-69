@@ -23,7 +23,7 @@ const AtsScoreDisplay: React.FC<AtsScoreDisplayProps> = ({
           boxShadow: `0 0 6px ${getScoreColor()}` 
         }}
       />
-      <span className="font-medium text-resumeblue">{score}%</span>
+      <span className="font-medium text-resumeblue">{score}% ATS</span>
     </div>
   );
 };
