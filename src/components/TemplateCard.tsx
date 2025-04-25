@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ThumbsUp, ThumbsDown, CheckCircle } from 'lucide-react';
 import { Button } from './ui/button';
@@ -38,11 +37,15 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
         transition-all duration-300 ease-in-out cursor-pointer
       `} onClick={() => onSelect(template.id)}>
       <div className="relative overflow-hidden">
-        <img src={template.image} alt={template.name} className={`
+        <img 
+          src="/lovable-uploads/fcf5ec96-acb3-47c0-b223-16f96e5323fe.png" 
+          alt={template.name} 
+          className={`
             w-full h-64 object-cover object-top 
             transition-transform duration-700 
             ${selected ? 'brightness-90' : 'brightness-100'}
-          `} />
+          `} 
+        />
         {selected && <div className="absolute top-3 left-3 bg-resumeblue text-white rounded-full p-2 animate-fade-in">
             <CheckCircle className="h-4 w-4" />
           </div>}
