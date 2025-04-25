@@ -417,7 +417,19 @@ const ResumeEditor = () => {
         </div>
       </div>
       
-      <div className="flex justify-end px-6 py-2">
+      <div className="flex justify-between items-center px-6 py-2">
+        <div className="md:hidden flex items-center gap-2">
+          <Progress value={progress} className="w-16 h-2" />
+          <span className="text-xs">
+            {isSaving ? 'Saving...' : 'All changes saved'}
+          </span>
+        </div>
+        <div className="hidden md:flex justify-end items-center gap-4">
+          <Progress value={progress} className="h-2 w-32" />
+          <span className="text-sm whitespace-nowrap">
+            {isSaving ? 'Saving...' : 'All changes saved'}
+          </span>
+        </div>
         <AtsScoreDisplay />
       </div>
 
