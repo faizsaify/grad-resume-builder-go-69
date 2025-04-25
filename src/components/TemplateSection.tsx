@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import TemplateCard, { Template } from './TemplateCard';
 
+// Template data with proper references to template components
 const templateData: Template[] = [
   {
     id: '1',
@@ -10,7 +11,8 @@ const templateData: Template[] = [
     atsScore: 95,
     tags: ['Modern', 'Minimalist', 'Professional'],
     upvotes: 382,
-    downvotes: 14
+    downvotes: 14,
+    component: 'BasicTemplate'
   },
   {
     id: '2',
@@ -19,7 +21,8 @@ const templateData: Template[] = [
     atsScore: 82,
     tags: ['Creative', 'Bold', 'Design'],
     upvotes: 243,
-    downvotes: 27
+    downvotes: 27,
+    component: 'CreativeTemplate'
   },
   {
     id: '3',
@@ -28,7 +31,8 @@ const templateData: Template[] = [
     atsScore: 98,
     tags: ['Professional', 'Corporate', 'Banking'],
     upvotes: 517,
-    downvotes: 9
+    downvotes: 9,
+    component: 'ExecutiveTemplate'
   },
   {
     id: '4',
@@ -37,7 +41,8 @@ const templateData: Template[] = [
     atsScore: 88,
     tags: ['Tech', 'Modern', 'Startups'],
     upvotes: 328,
-    downvotes: 21
+    downvotes: 21,
+    component: 'TechTemplate'
   },
   {
     id: '5',
@@ -46,16 +51,18 @@ const templateData: Template[] = [
     atsScore: 92,
     tags: ['Academic', 'Research', 'Education'],
     upvotes: 186,
-    downvotes: 12
+    downvotes: 12,
+    component: 'AcademicTemplate'
   },
   {
     id: '6',
     name: 'Internship Specialist',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2000&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2000&auto=format&fit=crop',
     atsScore: 94,
     tags: ['Internship', 'Entry-level', 'Student'],
     upvotes: 421,
-    downvotes: 15
+    downvotes: 15,
+    component: 'InternshipTemplate'
   }
 ];
 
@@ -68,7 +75,6 @@ const TemplateSection: React.FC<TemplateSectionProps> = ({ id }) => {
   
   const handleSelectTemplate = (id: string) => {
     setSelectedTemplate(id);
-    // In a real app, you would save this selection and navigate to the editor
   };
   
   return (

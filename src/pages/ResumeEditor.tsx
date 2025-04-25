@@ -36,9 +36,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ChevronDown, UserCircle, GraduationCap, Briefcase, Wrench, Folder, Award } from 'lucide-react';
-import BasicTemplate from '@/components/resume/BasicTemplate';
 import { ResumeData } from '@/types/resume';
 import AtsScoreDisplay from '@/components/resume/AtsScoreDisplay';
+import { getTemplateComponent, getTemplateDummyData } from '@/utils/templateUtils';
 
 const ResumeEditor = () => {
   const { templateId } = useParams();
@@ -47,31 +47,11 @@ const ResumeEditor = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
   const { toast } = useToast();
-  const [resumeData, setResumeData] = useState<ResumeData>({
-    personalInfo: {
-      fullName: '',
-      email: '',
-      phone: '',
-      location: ''
-    },
-    education: [{
-      school: '',
-      degree: '',
-      year: '',
-      gpa: ''
-    }],
-    experience: [{
-      company: '',
-      position: '',
-      period: '',
-      description: ['']
-    }],
-    skills: [],
-    projects: [{
-      name: '',
-      description: ''
-    }]
-  });
+  
+  const TemplateComponent = getTemplateComponent(templateId || '1');
+  const templateDummyData = getTemplateDummyData(templateId || '1');
+  
+  const [resumeData, setResumeData] = useState<ResumeData>(templateDummyData);
 
   useEffect(() => {
     const calculateProgress = () => {
@@ -814,12 +794,11 @@ const ResumeEditor = () => {
 
         <ResizablePanel defaultSize={40}>
           <ScrollArea className={`h-full ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'} p-6 relative`}>
-            
             <div id="resume-preview" className={`
               max-w-[850px] mx-auto shadow-lg
               ${isDarkMode ? 'bg-white' : 'bg-white'}
             `}>
-              <BasicTemplate data={resumeData} />
+              <TemplateComponent data={resumeData} />
             </div>
           </ScrollArea>
         </ResizablePanel>

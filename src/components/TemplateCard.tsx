@@ -12,6 +12,7 @@ export interface Template {
   tags: string[];
   upvotes: number;
   downvotes: number;
+  component: string; // Reference to the template component to use
 }
 
 interface TemplateCardProps {
