@@ -417,15 +417,19 @@ const ResumeEditor = () => {
       </div>
       
       <div className="flex justify-between items-center px-6 py-3 bg-gray-50 dark:bg-gray-800">
-        <div className="w-3/5 pr-4">
+        <div className="flex-1 pr-4 flex items-center">
           <div className="md:flex items-center gap-4 hidden w-full">
-            <Progress value={progress} className="h-3 flex-1 bg-gray-200 dark:bg-gray-700" />
+            <div className="flex-1 h-3">
+              <Progress value={progress} className="h-full w-full bg-gray-200 dark:bg-gray-700" />
+            </div>
             <span className="text-sm whitespace-nowrap font-medium">
               {progress}%
             </span>
           </div>
-          <div className="md:hidden flex items-center gap-2">
-            <Progress value={progress} className="h-3 flex-1 bg-gray-200 dark:bg-gray-700" />
+          <div className="md:hidden flex items-center gap-2 w-full">
+            <div className="flex-1 h-3">
+              <Progress value={progress} className="h-full w-full bg-gray-200 dark:bg-gray-700" />
+            </div>
             <span className="text-xs font-medium">
               {progress}%
             </span>
