@@ -414,8 +414,12 @@ const ResumeEditor = () => {
             <Download className="h-4 w-4 mr-2" />
             Export PDF
           </Button>
+        
+        <div className="hidden md:block">
+          <AtsScoreDisplay />
         </div>
       </div>
+    </div>
 
       <ResizablePanelGroup 
         direction="horizontal" 
@@ -797,7 +801,7 @@ const ResumeEditor = () => {
 
         <ResizablePanel defaultSize={40}>
           <ScrollArea className={`h-full ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'} p-6 relative`}>
-            <AtsScoreDisplay />
+            
             <div id="resume-preview" className={`
               max-w-[850px] mx-auto shadow-lg
               ${isDarkMode ? 'bg-white' : 'bg-white'}
@@ -816,10 +820,13 @@ const ResumeEditor = () => {
           </span>
         </div>
         
+        <div className="flex items-center gap-2">
+        <AtsScoreDisplay />
         <Button onClick={handleExportPDF} size="sm">
           <Download className="h-4 w-4 mr-1" />
           Export PDF
         </Button>
+      </div>
       </div>
     </div>
   );
@@ -851,19 +858,4 @@ const EditorSection: React.FC<EditorSectionProps> = ({
     `}>
       <CollapsibleTrigger 
         className="flex items-center gap-2 w-full p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors"
-        onClick={onToggle}
-      >
-        <div className="flex-1 flex items-center gap-2">
-          {icon}
-          <span className="font-medium">{title}</span>
-        </div>
-        <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200" />
-      </CollapsibleTrigger>
-      <CollapsibleContent className="space-y-4 pt-4">
-        {children}
-      </CollapsibleContent>
-    </Collapsible>
-  );
-};
-
-export default ResumeEditor;
+        onClick={on
