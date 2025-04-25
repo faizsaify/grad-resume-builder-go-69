@@ -38,12 +38,17 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ChevronDown, UserCircle, GraduationCap, Briefcase, Wrench, Folder, Award } from 'lucide-react';
 import { ResumeData } from '@/types/resume';
 import AtsScoreDisplay from '@/components/resume/AtsScoreDisplay';
-import { getTemplateComponent, getTemplateDummyData } from '@/utils/templateUtils';
+import { 
+  getTemplateComponent, 
+  getTemplateDummyData, 
+  createEmptyResumeData, 
+  calculateProgress 
+} from '@/utils/templateUtils';
 
 const ResumeEditor = () => {
   const { templateId } = useParams();
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [progress, setProgress] = useState(10);
+  const [progress, setProgress] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
   const { toast } = useToast();
@@ -52,62 +57,12 @@ const ResumeEditor = () => {
   const templateDummyData = getTemplateDummyData(templateId || '1');
   
   const [resumeData, setResumeData] = useState<ResumeData>(templateDummyData);
+  const [userInputs, setUserInputs] = useState<ResumeData>(createEmptyResumeData(templateId || '1'));
 
   useEffect(() => {
-    const calculateProgress = () => {
-      let totalFields = 0;
-      let filledFields = 0;
-      
-      if (resumeData.personalInfo) {
-        const personalFields = Object.keys(resumeData.personalInfo);
-        totalFields += personalFields.length;
-        filledFields += personalFields.filter(key => 
-          resumeData.personalInfo && resumeData.personalInfo[key as keyof typeof resumeData.personalInfo]
-        ).length;
-      }
-      
-      if (resumeData.education) {
-        resumeData.education.forEach(edu => {
-          totalFields += 4;
-          if (edu.school) filledFields += 1;
-          if (edu.degree) filledFields += 1;
-          if (edu.year) filledFields += 1;
-          if (edu.gpa) filledFields += 1;
-        });
-      }
-      
-      if (resumeData.experience) {
-        resumeData.experience.forEach(exp => {
-          totalFields += 3 + (exp.description?.length || 0);
-          if (exp.company) filledFields += 1;
-          if (exp.position) filledFields += 1;
-          if (exp.period) filledFields += 1;
-          filledFields += exp.description?.filter(desc => desc).length || 0;
-        });
-      }
-      
-      if (resumeData.skills) {
-        totalFields += Math.max(1, resumeData.skills.length);
-        filledFields += resumeData.skills.filter(skill => skill).length;
-      }
-      
-      if (resumeData.projects) {
-        resumeData.projects.forEach(proj => {
-          totalFields += 2;
-          if (proj.name) filledFields += 1;
-          if (proj.description) filledFields += 1;
-        });
-      }
-      
-      const percentage = totalFields > 0 
-        ? Math.min(100, Math.max(0, Math.round((filledFields / totalFields) * 100)))
-        : 0;
-      
-      setProgress(percentage);
-    };
-    
-    calculateProgress();
-  }, [resumeData]);
+    const progressValue = calculateProgress(userInputs, templateDummyData);
+    setProgress(progressValue);
+  }, [userInputs, templateDummyData]);
 
   useEffect(() => {
     const savingTimeout = setTimeout(() => {
@@ -155,6 +110,62 @@ const ResumeEditor = () => {
         newData.skills[index] = value;
       } else if (section === 'projects' && newData.projects) {
         newData.projects = [...newData.projects];
+        newData.projects[index] = {
+          ...newData.projects[index],
+          [field]: value
+        };
+      }
+      
+      return newData;
+    });
+    
+    setUserInputs(prev => {
+      const newData = { ...prev };
+      
+      if (section === 'personalInfo' && newData.personalInfo) {
+        newData.personalInfo = {
+          ...newData.personalInfo,
+          [field]: value
+        };
+      } else if (section === 'education' && newData.education) {
+        newData.education = [...newData.education];
+        while (newData.education.length <= index) {
+          newData.education.push({ school: '', degree: '', year: '', gpa: '' });
+        }
+        newData.education[index] = {
+          ...newData.education[index],
+          [field]: value
+        };
+      } else if (section === 'experience' && newData.experience) {
+        newData.experience = [...newData.experience];
+        while (newData.experience.length <= index) {
+          newData.experience.push({ company: '', position: '', period: '', description: [''] });
+        }
+        
+        if (field.startsWith('description')) {
+          const descIndex = parseInt(field.split('-')[1]);
+          newData.experience[index] = {
+            ...newData.experience[index],
+            description: [...newData.experience[index].description]
+          };
+          while (newData.experience[index].description.length <= descIndex) {
+            newData.experience[index].description.push('');
+          }
+          newData.experience[index].description[descIndex] = value;
+        } else {
+          newData.experience[index] = {
+            ...newData.experience[index],
+            [field]: value
+          };
+        }
+      } else if (section === 'skills') {
+        newData.skills = [...(newData.skills || [])];
+        newData.skills[index] = value;
+      } else if (section === 'projects' && newData.projects) {
+        newData.projects = [...newData.projects];
+        while (newData.projects.length <= index) {
+          newData.projects.push({ name: '', description: '' });
+        }
         newData.projects[index] = {
           ...newData.projects[index],
           [field]: value
