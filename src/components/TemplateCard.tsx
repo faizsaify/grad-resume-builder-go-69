@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ThumbsUp, ThumbsDown, CheckCircle } from 'lucide-react';
 import { Button } from './ui/button';
@@ -28,6 +29,7 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
     if (score >= 70) return 'bg-yellow-500';
     return 'bg-red-500';
   };
+  
   return <div className={`
         template-card 
         ${selected ? 'ring-4 ring-resumeblue/70 scale-105 shadow-2xl bg-resumeblue/5' : 'hover:scale-105 hover:shadow-lg'}
@@ -35,12 +37,17 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
       `} onClick={() => onSelect(template.id)}>
       <div className="relative overflow-hidden">
         <AspectRatio ratio={4 / 3}>
-          <img src={template.image} alt={template.name} onError={e => {
-          console.error(`Failed to load image for template: ${template.name}`);
-          const target = e.target as HTMLImageElement;
-          target.onerror = null;
-          target.src = 'https://placehold.co/600x400?text=Template+Preview';
-        }} className="object-scale-down" />
+          <img 
+            src={template.image} 
+            alt={`${template.name} resume template`} 
+            className="object-contain w-full h-full" 
+            onError={(e) => {
+              console.error(`Failed to load image for template: ${template.name}`);
+              const target = e.target as HTMLImageElement;
+              target.onerror = null;
+              target.src = 'https://placehold.co/600x400?text=Template+Preview';
+            }} 
+          />
         </AspectRatio>
         {selected && <div className="absolute top-3 left-3 bg-resumeblue text-white rounded-full p-2 animate-fade-in">
             <CheckCircle className="h-4 w-4" />

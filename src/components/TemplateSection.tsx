@@ -8,7 +8,7 @@ const templateData: Template[] = [
   {
     id: '1',
     name: 'Modern Minimal',
-    image: '/lovable-uploads/e43e33a9-c857-41e3-b322-2d10760809d9.png', // Updated with the new resume document image
+    image: '/lovable-uploads/60e8f55b-e1b0-4f98-a29b-86a9558303df.png', // Updated with the newly uploaded resume image
     atsScore: 95,
     tags: ['Modern', 'Minimalist', 'Professional'],
     upvotes: 382,
