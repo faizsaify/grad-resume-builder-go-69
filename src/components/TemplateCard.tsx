@@ -4,30 +4,52 @@ import { ThumbsUp, ThumbsDown, CheckCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
 import { AspectRatio } from './ui/aspect-ratio';
+import { Skeleton } from './ui/skeleton';
+
 export interface Template {
   id: string;
   name: string;
   image: string;
+  localImage?: string; // Optional local image path
   atsScore: number;
   tags: string[];
   upvotes: number;
   downvotes: number;
   component: string; // Reference to the template component to use
 }
+
 interface TemplateCardProps {
   template: Template;
   selected: boolean;
   onSelect: (id: string) => void;
 }
+
 const TemplateCard: React.FC<TemplateCardProps> = ({
   template,
   selected,
   onSelect
 }) => {
+  const [isImageLoaded, setIsImageLoaded] = React.useState(false);
+  const [imageSrc, setImageSrc] = React.useState(template.localImage || template.image);
+  const [imageError, setImageError] = React.useState(false);
+
   const getScoreColor = (score: number) => {
     if (score >= 90) return 'bg-green-500';
     if (score >= 70) return 'bg-yellow-500';
     return 'bg-red-500';
+  };
+
+  const handleImageError = () => {
+    console.error(`Failed to load image for template: ${template.name}`);
+    setImageError(true);
+    
+    // If local image failed, try the fallback image
+    if (imageSrc === template.localImage && template.image) {
+      setImageSrc(template.image);
+    } else {
+      // If both failed, use placeholder
+      setImageSrc('https://placehold.co/600x400?text=Template+Preview');
+    }
   };
   
   return <div className={`
@@ -37,16 +59,15 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
       `} onClick={() => onSelect(template.id)}>
       <div className="relative overflow-hidden">
         <AspectRatio ratio={4 / 3}>
+          {!isImageLoaded && !imageError && (
+            <Skeleton className="w-full h-full absolute inset-0" />
+          )}
           <img 
-            src={template.image} 
+            src={imageSrc} 
             alt={`${template.name} resume template`} 
-            className="object-contain w-full h-full" 
-            onError={(e) => {
-              console.error(`Failed to load image for template: ${template.name}`);
-              const target = e.target as HTMLImageElement;
-              target.onerror = null;
-              target.src = 'https://placehold.co/600x400?text=Template+Preview';
-            }} 
+            className={`object-contain w-full h-full ${isImageLoaded ? 'opacity-100' : 'opacity-0'}`}
+            onLoad={() => setIsImageLoaded(true)}
+            onError={handleImageError}
           />
         </AspectRatio>
         {selected && <div className="absolute top-3 left-3 bg-resumeblue text-white rounded-full p-2 animate-fade-in">
@@ -103,4 +124,5 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
       </div>
     </div>;
 };
+
 export default TemplateCard;

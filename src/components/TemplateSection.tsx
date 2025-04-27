@@ -8,7 +8,10 @@ const templateData: Template[] = [
   {
     id: '1',
     name: 'Modern Minimal',
-    image: '/lovable-uploads/60e8f55b-e1b0-4f98-a29b-86a9558303df.png', // Updated with the newly uploaded resume image
+    // Using a placeholder image URL as fallback and setting the actual uploaded image
+    // If the uploaded image fails, it will fallback to the placeholder
+    image: 'https://placehold.co/600x400?text=Resume+Template',
+    localImage: '/lovable-uploads/60e8f55b-e1b0-4f98-a29b-86a9558303df.png',
     atsScore: 95,
     tags: ['Modern', 'Minimalist', 'Professional'],
     upvotes: 382,
