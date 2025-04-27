@@ -44,6 +44,7 @@ import {
   createEmptyResumeData, 
   calculateProgress 
 } from '@/utils/templateUtils';
+import SuccessScreen from '@/components/SuccessScreen';
 
 const ResumeEditor = () => {
   const { templateId } = useParams();
@@ -51,6 +52,7 @@ const ResumeEditor = () => {
   const [progress, setProgress] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
   const { toast } = useToast();
   
   const TemplateComponent = getTemplateComponent(templateId || '1');
@@ -277,11 +279,14 @@ const ResumeEditor = () => {
 
   const handleExportPDF = async () => {
     try {
-      await downloadPDF('resume-preview', 'my-resume.pdf');
-      toast({
-        title: "Success",
-        description: "Your resume has been downloaded as PDF",
-      });
+      const success = await downloadPDF('resume-preview', 'my-resume.pdf');
+      if (success) {
+        setShowSuccess(true);
+        toast({
+          title: "Success",
+          description: "Your resume has been downloaded as PDF",
+        });
+      }
     } catch (error) {
       toast({
         variant: "destructive",
@@ -315,6 +320,7 @@ const ResumeEditor = () => {
 
   return (
     <div className={`h-screen flex flex-col ${isDarkMode ? 'dark bg-gray-900 text-white' : 'bg-white text-resumetext'}`}>
+      {showSuccess && <SuccessScreen onClose={() => setShowSuccess(false)} />}
       <div className={`
         border-b p-3 flex justify-between items-center sticky top-0 z-10
         ${isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white'}
