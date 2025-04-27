@@ -3,12 +3,12 @@ import React, { useState } from 'react';
 import TemplateCard, { Template } from './TemplateCard';
 import { AspectRatio } from './ui/aspect-ratio';
 
-// Template data with proper image references and paths
+// Template data with the new Modern Minimal template image
 const templateData: Template[] = [
   {
     id: '1',
     name: 'Modern Minimal',
-    image: '/lovable-uploads/bec03b73-e596-4281-9932-b3d336dd8658.png', // Updated with the new resume document image
+    image: '/lovable-uploads/e43e33a9-c857-41e3-b322-2d10760809d9.png', // Updated with the new resume document image
     atsScore: 95,
     tags: ['Modern', 'Minimalist', 'Professional'],
     upvotes: 382,
