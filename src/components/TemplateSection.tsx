@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import TemplateCard, { Template } from './TemplateCard';
 import { AspectRatio } from './ui/aspect-ratio';
@@ -6,7 +7,7 @@ const templateData: Template[] = [
   {
     id: '1',
     name: 'Modern Minimal',
-    image: '/lovable-uploads/979e9a34-8ff3-42ee-94d4-70c2f598d547.png',
+    image: '/lovable-uploads/fcf5ec96-acb3-47c0-b223-16f96e5323fe.png',
     atsScore: 95,
     tags: ['Modern', 'Minimalist', 'Professional'],
     upvotes: 382,
