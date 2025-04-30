@@ -23,7 +23,7 @@ const SuccessScreen = ({ onClose }: SuccessScreenProps) => {
             Congratulations! Your resume is ready!
           </h1>
           <p className="text-xl text-resumetext-light">
-            We hope you ace that interview! Thanks for trusting us.
+           ! Thanks for using us.
           </p>
         </div>
 
@@ -37,21 +37,11 @@ const SuccessScreen = ({ onClose }: SuccessScreenProps) => {
           </Button>
           
           <div className="flex flex-col items-center space-y-4">
-            <Button 
-              variant="outline" 
-              className="w-full sm:w-auto px-8"
-              onClick={() => {
-                navigator.clipboard.writeText(window.location.origin);
-                onClose();
-              }}
-            >
-              Share with a Friend
-            </Button>
           </div>
         </div>
 
         <p className="text-resumetext-lighter text-sm">
-          Come back anytime — we'll be here for your next big opportunity!
+          Come back Again!
         </p>
       </div>
     </div>

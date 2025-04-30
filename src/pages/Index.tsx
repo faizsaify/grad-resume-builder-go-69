@@ -24,7 +24,7 @@ const Index = () => {
       
       <footer className="bg-resumeblue-light py-6">
         <div className="container mx-auto text-center text-resumetext-light text-sm">
-          <p>© {new Date().getFullYear()} GradResumeBuilder. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} ResumeBuilder. All rights reserved.</p>
         </div>
       </footer>
     </div>

@@ -7,61 +7,62 @@ const templateData: Template[] = [
   {
     id: '1',
     name: 'Modern Minimal',
-    image: '/lovable-uploads/fcf5ec96-acb3-47c0-b223-16f96e5323fe.png',
+    //image: '/images/first.png',
+    image: '/src/images/first.png',
     atsScore: 95,
     tags: ['Modern', 'Minimalist', 'Professional'],
-    upvotes: 382,
-    downvotes: 14,
+    upvotes: "",
+    downvotes: "",
     component: 'BasicTemplate'
   },
   {
     id: '2',
     name: 'Creative Edge',
-    image: '/placeholder.svg',
+    image: '/src/images/sec.png',
     atsScore: 82,
     tags: ['Creative', 'Bold', 'Design'],
-    upvotes: 243,
-    downvotes: 27,
+    upvotes: "",
+    downvotes: "",
     component: 'CreativeTemplate'
   },
   {
     id: '3',
     name: 'Executive Clean',
-    image: '/placeholder.svg',
+    image: '/src/images/3rd.jpg',
     atsScore: 98,
     tags: ['Professional', 'Corporate', 'Banking'],
-    upvotes: 517,
-    downvotes: 9,
+    upvotes: "",
+    downvotes: "",
     component: 'ExecutiveTemplate'
   },
   {
     id: '4',
     name: 'Tech Startup',
-    image: '/placeholder.svg',
+    image: '/src/images/4th.jpg',
     atsScore: 88,
     tags: ['Tech', 'Modern', 'Startups'],
-    upvotes: 328,
-    downvotes: 21,
+    upvotes: "",
+    downvotes: "",
     component: 'TechTemplate'
   },
   {
     id: '5',
     name: 'Academic Focus',
-    image: '/placeholder.svg',
+    image: '/src/images/6.jpg',
     atsScore: 92,
     tags: ['Academic', 'Research', 'Education'],
-    upvotes: 186,
-    downvotes: 12,
+    upvotes: "",
+    downvotes: "",
     component: 'AcademicTemplate'
   },
   {
     id: '6',
     name: 'Internship Specialist',
-    image: '/placeholder.svg',
+    image: '/src/images/66.jpg',
     atsScore: 94,
     tags: ['Internship', 'Entry-level', 'Student'],
-    upvotes: 421,
-    downvotes: 15,
+    upvotes: "",
+    downvotes: "",
     component: 'InternshipTemplate'
   }
 ];
@@ -83,7 +84,7 @@ const TemplateSection: React.FC<TemplateSectionProps> = ({ id }) => {
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Choose Your Resume Template</h2>
           <p className="text-xl text-resumetext-light max-w-2xl mx-auto">
-            Pick a design you like. See ATS score & real user votes.
+            Pick a design you like. See ATS score.
           </p>
         </div>
         
